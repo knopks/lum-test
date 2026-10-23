@@ -1,0 +1,95 @@
+orgAllowlist: github.com/knopks/lum-test
+
+githubApp:
+  id: 5443949
+  installationId: 174535028
+  slug: lum-test-atlantis
+
+vcsSecretName: atlantis-vcs
+
+serviceAccount:
+  create: true
+  name: atlantis
+
+service:
+  type: ClusterIP
+
+ingress:
+  enabled: false
+
+webhook_ingress:
+  enabled: true
+  ingressClassName: alb
+  path: /events
+  pathType: Exact
+  annotations:
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
+    alb.ingress.kubernetes.io/load-balancer-name: lum-test-atlantis
+    alb.ingress.kubernetes.io/security-groups: lum-test-atlantis-alb
+
+volumeClaim:
+  enabled: true
+  dataStorage: 5Gi
+  storageClassName: ebs-csi-default-sc
+
+defaultTFVersion: 1.17.0
+
+repoConfig: |
+  repos:
+    - id: github.com/knopks/lum-test
+      apply_requirements: [mergeable]
+      allowed_overrides: [workflow]
+      allow_custom_workflows: false
+
+environment:
+  TF_VAR_github_app_id: "5443949"
+  TF_VAR_github_app_installation_id: "174535028"
+  TF_VAR_github_app_pem_file: /var/github-app/key.pem
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 512Mi
+  limits:
+    memory: 2Gi
+
+extraManifests:
+  - apiVersion: networking.k8s.io/v1
+    kind: NetworkPolicy
+    metadata:
+      name: atlantis
+    spec:
+      podSelector:
+        matchLabels:
+          app: atlantis
+      policyTypes:
+        - Ingress
+        - Egress
+      ingress:
+        - from:
+            - ipBlock:
+                cidr: 10.0.0.0/16
+          ports:
+            - protocol: TCP
+              port: 4141
+      egress:
+        - ports:
+            - protocol: UDP
+              port: 53
+            - protocol: TCP
+              port: 53
+        - to:
+            - ipBlock:
+                cidr: 169.254.170.23/32
+          ports:
+            - protocol: TCP
+              port: 80
+        - to:
+            - ipBlock:
+                cidr: 0.0.0.0/0
+                except:
+                  - 169.254.169.254/32
+          ports:
+            - protocol: TCP
+              port: 443
