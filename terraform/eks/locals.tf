@@ -1,3 +1,3 @@
-locals {
-  name = "lum-test"
+module "globals" {
+  source = "../modules/globals"
 }

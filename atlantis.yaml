@@ -5,14 +5,30 @@ projects:
   - name: github
     dir: terraform/github
     autoplan:
-      when_modified: ["*.tf", ".terraform.lock.hcl"]
+      when_modified:
+        - "*.tf"
+        - ".terraform.lock.hcl"
+        - "../modules/globals/*.tf"
 
   - name: eks
     dir: terraform/eks
     autoplan:
-      when_modified: ["*.tf", "../modules/**/*.tf", ".terraform.lock.hcl"]
+      when_modified:
+        - "*.tf"
+        - ".terraform.lock.hcl"
+        - "../modules/globals/*.tf"
+        - "../modules/vpc/*.tf"
+        - "../modules/subnets/*.tf"
+        - "../modules/eks-cluster/*.tf"
+        - "../modules/security-group/*.tf"
 
   - name: platform
     dir: terraform/platform
     autoplan:
-      when_modified: ["*.tf", "helm-values/*.yaml", "iam-policies/*.json", "../modules/**/*.tf", ".terraform.lock.hcl"]
+      when_modified:
+        - "*.tf"
+        - ".terraform.lock.hcl"
+        - "helm-values/*.yaml"
+        - "iam-policies/*.json"
+        - "../modules/globals/*.tf"
+        - "../modules/pod-identity/*.tf"

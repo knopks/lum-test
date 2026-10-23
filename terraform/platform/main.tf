@@ -4,8 +4,8 @@
 module "ebs_csi_driver_pod_identity" {
   source = "../modules/pod-identity"
 
-  name            = "${local.name}-ebs-csi-driver"
-  cluster_name    = local.name
+  name            = "${module.globals.name}-ebs-csi-driver"
+  cluster_name    = module.globals.name
   namespace       = "kube-system"
   service_account = "ebs-csi-controller-sa"
 
@@ -15,7 +15,7 @@ module "ebs_csi_driver_pod_identity" {
 }
 
 resource "aws_eks_addon" "ebs_csi_driver" {
-  cluster_name  = local.name
+  cluster_name  = module.globals.name
   addon_name    = "aws-ebs-csi-driver"
   addon_version = "v1.67.1-eksbuild.1"
 
@@ -32,15 +32,15 @@ resource "aws_eks_addon" "ebs_csi_driver" {
 # AWS Load Balancer Controller
 ################################################################################
 resource "aws_iam_policy" "aws_load_balancer_controller" {
-  name   = "${local.name}-aws-load-balancer-controller"
+  name   = "${module.globals.name}-aws-load-balancer-controller"
   policy = file("${path.module}/iam-policies/aws-load-balancer-controller.json")
 }
 
 module "aws_load_balancer_controller_pod_identity" {
   source = "../modules/pod-identity"
 
-  name            = "${local.name}-aws-load-balancer-controller"
-  cluster_name    = local.name
+  name            = "${module.globals.name}-aws-load-balancer-controller"
+  cluster_name    = module.globals.name
   namespace       = "kube-system"
   service_account = "aws-load-balancer-controller"
 
@@ -70,7 +70,7 @@ resource "aws_iam_role" "rbac" {
     Version = "2012-10-17"
     Statement = [{
       Effect    = "Allow"
-      Principal = { AWS = "arn:aws:iam::${var.aws_account_id}:root" }
+      Principal = { AWS = "arn:aws:iam::${module.globals.account_id}:root" }
       Action    = "sts:AssumeRole"
     }]
   })
@@ -79,7 +79,7 @@ resource "aws_iam_role" "rbac" {
 resource "aws_eks_access_entry" "rbac" {
   for_each = local.rbac_roles
 
-  cluster_name      = local.name
+  cluster_name      = module.globals.name
   principal_arn     = aws_iam_role.rbac[each.key].arn
   kubernetes_groups = [each.key]
 }
@@ -110,8 +110,8 @@ resource "kubernetes_cluster_role_binding_v1" "rbac" {
 module "atlantis_pod_identity" {
   source = "../modules/pod-identity"
 
-  name            = "${local.name}-atlantis"
-  cluster_name    = local.name
+  name            = "${module.globals.name}-atlantis"
+  cluster_name    = module.globals.name
   namespace       = "atlantis"
   service_account = "atlantis"
 
@@ -121,12 +121,12 @@ module "atlantis_pod_identity" {
 }
 
 resource "aws_eks_access_entry" "atlantis" {
-  cluster_name  = local.name
+  cluster_name  = module.globals.name
   principal_arn = module.atlantis_pod_identity.role_arn
 }
 
 resource "aws_eks_access_policy_association" "atlantis" {
-  cluster_name  = local.name
+  cluster_name  = module.globals.name
   principal_arn = aws_eks_access_entry.atlantis.principal_arn
   policy_arn    = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
 

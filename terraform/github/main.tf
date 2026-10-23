@@ -2,7 +2,7 @@
 # Repository
 ################################################################################
 resource "github_repository" "this" {
-  name        = var.repository_name
+  name        = "lum-test"
   description = "Homework Assignment: EKS and Atlantis"
   visibility  = "public"
 
@@ -41,7 +41,7 @@ resource "aws_secretsmanager_secret" "atlantis_webhook_secret" {
 data "aws_lb" "atlantis" {
   count = var.enable_atlantis_webhook ? 1 : 0
 
-  name = "${var.repository_name}-atlantis"
+  name = "${module.globals.name}-atlantis"
 }
 
 data "aws_secretsmanager_secret_version" "atlantis_webhook_secret" {

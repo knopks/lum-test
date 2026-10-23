@@ -1,21 +1,3 @@
-variable "aws_account_id" {
-  description = "AWS account to deploy into"
-  type        = string
-  default     = "308054409751"
-}
-
-variable "github_owner" {
-  description = "GitHub user or organization that owns the repository"
-  type        = string
-  default     = "knopks"
-}
-
-variable "repository_name" {
-  description = "Name of the assignment repository"
-  type        = string
-  default     = "lum-test"
-}
-
 variable "enable_atlantis_webhook" {
   description = "Create the Atlantis webhook"
   type        = bool

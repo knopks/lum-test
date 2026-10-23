@@ -1,5 +1,5 @@
 provider "github" {
-  owner = var.github_owner
+  owner = "knopks"
 
   dynamic "app_auth" {
     for_each = var.github_app_id != "" ? [1] : []
@@ -12,12 +12,10 @@ provider "github" {
 }
 
 provider "aws" {
-  region              = "eu-north-1"
-  allowed_account_ids = [var.aws_account_id]
+  region              = module.globals.region
+  allowed_account_ids = [module.globals.account_id]
 
   default_tags {
-    tags = {
-      Project = "lum-test"
-    }
+    tags = module.globals.tags
   }
 }

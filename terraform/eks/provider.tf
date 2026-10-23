@@ -1,11 +1,9 @@
 provider "aws" {
-  region              = "eu-north-1"
-  allowed_account_ids = [var.aws_account_id]
+  region              = module.globals.region
+  allowed_account_ids = [module.globals.account_id]
 
   default_tags {
-    tags = {
-      Project = "lum-test"
-    }
+    tags = module.globals.tags
   }
 }
 

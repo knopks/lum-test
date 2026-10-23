@@ -6,7 +6,7 @@ data "github_ip_ranges" "this" {}
 module "atlantis_alb_security_group" {
   source = "../modules/security-group"
 
-  name        = "${local.name}-atlantis-alb"
+  name        = "${module.globals.name}-atlantis-alb"
   description = "Atlantis webhook ALB"
   vpc_id      = module.vpc.vpc_id
 

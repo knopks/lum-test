@@ -1,7 +1,7 @@
 module "eks_cluster" {
   source = "../modules/eks-cluster"
 
-  name                = local.name
+  name                = module.globals.name
   subnet_ids          = module.vpc.public_subnet_ids
   public_access_cidrs = ["0.0.0.0/0"]
 
@@ -16,7 +16,7 @@ module "eks_cluster" {
 
   access_entries = {
     test = { # my current testing user, would remove
-      principal_arn = "arn:aws:iam::${var.aws_account_id}:user/lum-test"
+      principal_arn = "arn:aws:iam::${module.globals.account_id}:user/lum-test"
       policy_arn    = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
     }
   }
