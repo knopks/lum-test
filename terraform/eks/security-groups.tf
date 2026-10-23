@@ -16,7 +16,7 @@ module "atlantis_alb_security_group" {
       from_port   = 80
       to_port     = 80
       cidr_ipv4   = cidr
-      description = "GitHub webhooks"
+      description = "GitHub Webhooks IPV4"
     }
   }
 
@@ -26,7 +26,7 @@ module "atlantis_alb_security_group" {
       from_port                    = 4141
       to_port                      = 4141
       referenced_security_group_id = module.eks_cluster.node_security_group_id
-      description                  = "Atlantis pods on 4141"
+      description                  = "Atlantis"
     }
   }
 }

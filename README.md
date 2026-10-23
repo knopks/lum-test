@@ -11,6 +11,16 @@ Homework assignment: EKS and Atlantis on AWS, deployed with Terraform and Helm.
 | `eks-admin` / `eks-read-only` | IAM roles, access entries and RBAC bindings in `terraform/platform` |
 | Atlantis with Terraform and Helm | Helm chart deployed by ArgoCD, which Terraform installs |
 | Atlantis on this repository | GitHub App + webhook in `terraform/github` |
+| Pull request showing Atlantis working | [#2](https://github.com/knopks/lum-test/pull/2) |
+
+## Demo
+
+[Pull request #2](https://github.com/knopks/lum-test/pull/2) shows the Atlantis flow:
+
+1. Opening the PR triggers `atlantis plan` for the stacks whose files changed (`atlantis.yaml`).
+2. Atlantis comments the plan output for each stack.
+3. Commenting `atlantis apply` applies the plans, and Atlantis comments the result.
+4. Merging the PR releases the Atlantis locks.
 
 ## Architecture
 
