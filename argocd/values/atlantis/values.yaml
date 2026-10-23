@@ -1,8 +1,8 @@
 orgAllowlist: github.com/knopks/lum-test
 
 githubApp:
-  id: 5443949
-  installationId: 174535028
+  id: "5443949"
+  installationId: "174535028"
   slug: lum-test-atlantis
 
 vcsSecretName: atlantis-vcs
