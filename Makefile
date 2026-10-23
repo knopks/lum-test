@@ -22,7 +22,7 @@ validate:
 
 .PHONY: plan
 plan:
-	cd terraform/$(STACK) && terraform plan
+	cd terraform/$(STACK) && terraform plan $(ARGS)
 
 .PHONY: apply
 apply:
