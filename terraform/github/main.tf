@@ -3,7 +3,7 @@
 ################################################################################
 resource "github_repository" "this" {
   name        = var.repository_name
-  description = "Homework Assignment"
+  description = "Homework Assignment: EKS and Atlantis"
   visibility  = "public"
 
   has_issues   = true

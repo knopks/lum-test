@@ -64,7 +64,8 @@ locals {
 resource "aws_iam_role" "rbac" {
   for_each = local.rbac_roles
 
-  name = each.key
+  name        = each.key
+  description = "EKS ${each.value} access"
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
     Statement = [{

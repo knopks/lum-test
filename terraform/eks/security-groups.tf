@@ -26,7 +26,7 @@ module "atlantis_alb_security_group" {
       from_port                    = 4141
       to_port                      = 4141
       referenced_security_group_id = module.eks_cluster.node_security_group_id
-      description                  = "Atlantis pods"
+      description                  = "Atlantis pods on 4141"
     }
   }
 }
