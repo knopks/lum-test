@@ -12,14 +12,16 @@ variable "kubernetes_version" {
 variable "addon_versions" {
   description = "EKS add-on versions"
   type = object({
-    vpc_cni    = string
-    kube_proxy = string
-    coredns    = string
+    vpc_cni            = string
+    kube_proxy         = string
+    coredns            = string
+    pod_identity_agent = string
   })
   default = {
-    vpc_cni    = "v1.22.4-eksbuild.3"
-    kube_proxy = "v1.37.0-eksbuild.22"
-    coredns    = "v1.14.7-eksbuild.11"
+    vpc_cni            = "v1.22.4-eksbuild.3"
+    kube_proxy         = "v1.37.0-eksbuild.22"
+    coredns            = "v1.14.7-eksbuild.11"
+    pod_identity_agent = "v1.3.10-eksbuild.3"
   }
 }
 

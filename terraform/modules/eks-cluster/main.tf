@@ -66,16 +66,12 @@ resource "aws_eks_cluster" "this" {
 }
 
 ################################################################################
-# IAM OIDC Provider
+# Pod Identity Agent Add-on
 ################################################################################
-data "tls_certificate" "this" {
-  url = aws_eks_cluster.this.identity[0].oidc[0].issuer
-}
-
-resource "aws_iam_openid_connect_provider" "this" {
-  url             = aws_eks_cluster.this.identity[0].oidc[0].issuer
-  client_id_list  = ["sts.amazonaws.com"]
-  thumbprint_list = [data.tls_certificate.this.certificates[0].sha1_fingerprint]
+resource "aws_eks_addon" "this_pod_identity_agent" {
+  cluster_name  = aws_eks_cluster.this.name
+  addon_name    = "eks-pod-identity-agent"
+  addon_version = var.addon_versions.pod_identity_agent
 }
 
 ################################################################################
