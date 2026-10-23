@@ -127,6 +127,44 @@ resource "aws_iam_role_policy_attachment" "this_node" {
 ################################################################################
 # Node Group
 ################################################################################
+resource "aws_security_group" "this_node" {
+  name        = "${var.name}-node"
+  description = "${var.name} worker nodes, for node-only rules"
+  vpc_id      = aws_eks_cluster.this.vpc_config[0].vpc_id
+
+  tags = {
+    Name = "${var.name}-node"
+  }
+}
+
+resource "aws_launch_template" "this_node" {
+  name_prefix = "${var.name}-node-"
+
+  vpc_security_group_ids = [
+    aws_eks_cluster.this.vpc_config[0].cluster_security_group_id,
+    aws_security_group.this_node.id,
+  ]
+
+  block_device_mappings {
+    device_name = "/dev/xvda"
+
+    ebs {
+      volume_size           = var.node_group.disk_size
+      volume_type           = "gp3"
+      encrypted             = true
+      delete_on_termination = true
+    }
+  }
+
+  tag_specifications {
+    resource_type = "instance"
+
+    tags = {
+      Name = "${var.name}-node"
+    }
+  }
+}
+
 resource "aws_eks_node_group" "this" {
   cluster_name           = aws_eks_cluster.this.name
   node_group_name_prefix = "${var.name}-default-"
@@ -135,8 +173,12 @@ resource "aws_eks_node_group" "this" {
 
   instance_types = var.node_group.instance_types
   ami_type       = var.node_group.ami_type
-  disk_size      = var.node_group.disk_size
   capacity_type  = "ON_DEMAND"
+
+  launch_template {
+    id      = aws_launch_template.this_node.id
+    version = aws_launch_template.this_node.latest_version
+  }
 
   scaling_config {
     min_size     = var.node_group.min_size
