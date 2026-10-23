@@ -15,14 +15,6 @@ module "eks_cluster" {
   }
 
   access_entries = {
-    eks-admin = {
-      principal_arn     = aws_iam_role.eks_admin.arn
-      kubernetes_groups = ["eks-admin"]
-    }
-    eks-read-only = {
-      principal_arn     = aws_iam_role.eks_read_only.arn
-      kubernetes_groups = ["eks-read-only"]
-    }
     lum-test = { # temporary user I made for myself
       principal_arn = "arn:aws:iam::308054409751:user/lum-test"
       policy_arn    = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"

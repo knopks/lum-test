@@ -8,7 +8,7 @@ Homework assignment: EKS and Atlantis on AWS, deployed with Terraform and Helm.
 |---|---|
 | 1 VPC, 2 subnets, 1 EKS cluster | `terraform/eks` |
 | Worker group, min 1 / max 2 | EKS managed node group in `terraform/eks` |
-| `eks-admin` / `eks-read-only` | IAM roles in `terraform/eks`, RBAC bindings in `terraform/platform` |
+| `eks-admin` / `eks-read-only` | IAM roles, access entries and RBAC bindings in `terraform/platform` |
 | Atlantis with Terraform and Helm | Helm chart deployed by ArgoCD, which Terraform installs |
 | Atlantis on this repository | GitHub App + webhook in `terraform/github` |
 
@@ -18,7 +18,7 @@ Homework assignment: EKS and Atlantis on AWS, deployed with Terraform and Helm.
 - **ArgoCD** deploys the cluster applications in `argocd/`: AWS Load Balancer Controller and Atlantis.
 - **Atlantis** runs `terraform plan` and `terraform apply` for each stack from pull requests.
 
-The initial deploy runs from a local computer (see [Initial setup](#initial-setup)); after that, all changes go through pull requests.
+First deploy runs from a local computer then changes can go through pull requests.
 
 ## Layout
 
@@ -27,17 +27,17 @@ cloudformation/     Terraform state bucket
 terraform/
   modules/          Shared modules
   github/           Repository, Atlantis secrets and webhook
-  eks/              VPC, cluster, nodes, eks-admin / eks-read-only roles
-  platform/         Add-ons, RBAC, ArgoCD
+  eks/              VPC, cluster, nodes
+  platform/         Add-ons, eks-admin / eks-read-only, ArgoCD
 argocd/             ArgoCD apps and their Helm values
 atlantis.yaml       Atlantis projects
 ```
 
 ## Initial setup
 
-Needed:
+Required:
 
-- AWS CLI profile `lum`
+- AWS profile `lum`
 - `GITHUB_TOKEN` environment variable
 - GitHub App for Atlantis, installed on repo
 
@@ -63,6 +63,7 @@ make apply STACK=github
 - **HTTP webhook.** No domain for a certificate; requests are signed and limited to GitHub's IPs.
 - **Public images and charts.** Production would use mirrors (e.g. ECR pull-through cache) and image scanning.
 - **Atlantis is admin everywhere** and runs in the cluster it manages. Production would use least privilege and a separate management cluster.
+- **eks-admin eks-read-only RBAC in Terraform.** Kept next to the IAM roles and access entries for simplicity. Used Kubernetes RBAC instead of EKS access policies (`AmazonEKSClusterAdminPolicy` / `AmazonEKSViewPolicy`), as I wasn't sure those would count. Would manage RBAC through ArgoCD, with only IAM and access entries in Terraform.
 - **Public repository.** Anyone could comment `atlantis apply` on an open PR. Would use a private repo with Atlantis restricted to a team.
 - **No PR approval before apply.** Would change Atlantis to require approval.
 - **Webhook secret in Terraform state.** GitHub provider has no way to keep it out if done through IaC, not Github App.

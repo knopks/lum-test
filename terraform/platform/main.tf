@@ -50,41 +50,56 @@ module "aws_load_balancer_controller_pod_identity" {
 }
 
 ################################################################################
-# RBAC for eks-admin / eks-read-only
+# eks-admin / eks-read-only
 ################################################################################
-resource "kubernetes_cluster_role_binding_v1" "eks_admin" {
-  metadata {
-    name = "eks-admin"
-  }
-
-  role_ref {
-    api_group = "rbac.authorization.k8s.io"
-    kind      = "ClusterRole"
-    name      = "cluster-admin"
-  }
-
-  subject {
-    api_group = "rbac.authorization.k8s.io"
-    kind      = "Group"
-    name      = "eks-admin"
+locals {
+  rbac_roles = {
+    eks-admin     = "cluster-admin"
+    eks-read-only = "view"
   }
 }
 
-resource "kubernetes_cluster_role_binding_v1" "eks_read_only" {
+# Not sure who these should be assumble by
+# or if they should've got describe cluster permission to get kubeconfig
+resource "aws_iam_role" "rbac" {
+  for_each = local.rbac_roles
+
+  name = each.key
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Effect    = "Allow"
+      Principal = { AWS = "arn:aws:iam::308054409751:root" }
+      Action    = "sts:AssumeRole"
+    }]
+  })
+}
+
+resource "aws_eks_access_entry" "rbac" {
+  for_each = local.rbac_roles
+
+  cluster_name      = local.name
+  principal_arn     = aws_iam_role.rbac[each.key].arn
+  kubernetes_groups = [each.key]
+}
+
+resource "kubernetes_cluster_role_binding_v1" "rbac" {
+  for_each = local.rbac_roles
+
   metadata {
-    name = "eks-read-only"
+    name = each.key
   }
 
   role_ref {
     api_group = "rbac.authorization.k8s.io"
     kind      = "ClusterRole"
-    name      = "view"
+    name      = each.value
   }
 
   subject {
     api_group = "rbac.authorization.k8s.io"
     kind      = "Group"
-    name      = "eks-read-only"
+    name      = each.key
   }
 }
 
@@ -106,9 +121,7 @@ module "atlantis_pod_identity" {
 
 resource "aws_eks_access_entry" "atlantis" {
   cluster_name  = local.name
-  principal_arn = "arn:aws:iam::308054409751:role/${local.name}-atlantis"
-
-  depends_on = [module.atlantis_pod_identity]
+  principal_arn = module.atlantis_pod_identity.role_arn
 }
 
 resource "aws_eks_access_policy_association" "atlantis" {
