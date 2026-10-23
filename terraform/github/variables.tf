@@ -13,7 +13,7 @@ variable "repository_name" {
 variable "enable_atlantis_webhook" {
   description = "Create the Atlantis webhook"
   type        = bool
-  default     = false
+  default     = true
 }
 
 variable "github_app_id" {

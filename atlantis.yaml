@@ -1,0 +1,18 @@
+version: 3
+automerge: false
+
+projects:
+  - name: github
+    dir: terraform/github
+    autoplan:
+      when_modified: ["*.tf", ".terraform.lock.hcl"]
+
+  - name: eks
+    dir: terraform/eks
+    autoplan:
+      when_modified: ["*.tf", "../modules/**/*.tf", ".terraform.lock.hcl"]
+
+  - name: platform
+    dir: terraform/platform
+    autoplan:
+      when_modified: ["*.tf", "helm-values/*.yaml", "iam-policies/*.json", "../modules/**/*.tf", ".terraform.lock.hcl"]
