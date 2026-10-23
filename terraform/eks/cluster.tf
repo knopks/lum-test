@@ -15,8 +15,8 @@ module "eks_cluster" {
   }
 
   access_entries = {
-    test = { # my current testing user, would remove
-      principal_arn = "arn:aws:iam::${module.globals.account_id}:user/lum-test"
+    initial-cluster-admin = {
+      principal_arn = "arn:aws:iam::${module.globals.account_id}:${var.initial_cluster_admin}"
       policy_arn    = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
     }
   }
