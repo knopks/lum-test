@@ -1,0 +1,18 @@
+clusterName: lum-test
+region: eu-north-1
+vpcTags:
+  Name: lum-test-vpc
+
+replicaCount: 1
+
+serviceAccount:
+  create: true
+  name: aws-load-balancer-controller
+
+ingressClassParams:
+  create: true
+  spec:
+    subnets:
+      tags:
+        Service:
+          - lum-test-public
