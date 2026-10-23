@@ -64,6 +64,7 @@ make apply STACK=github
 - **Public images and charts.** Production would use mirrors (e.g. ECR pull-through cache) and image scanning.
 - **Atlantis is admin everywhere** and runs in the cluster it manages. Production would use least privilege and a separate management cluster.
 - **eks-admin eks-read-only RBAC in Terraform.** Kept next to the IAM roles and access entries for simplicity. Used Kubernetes RBAC instead of EKS access policies (`AmazonEKSClusterAdminPolicy` / `AmazonEKSViewPolicy`), as I wasn't sure those would count. Would manage RBAC through ArgoCD, with only IAM and access entries in Terraform.
+- **eks-read-only uses the built-in `view` role.** It only covers namespaced resources, so nodes, PVs, storage classes, CRDs and cluster roles aren't visible. Would add a ClusterRole for cluster-scoped reads, still excluding secrets.
 - **Public repository.** Anyone could comment `atlantis apply` on an open PR. Would use a private repo with Atlantis restricted to a team.
 - **No PR approval before apply.** Would change Atlantis to require approval.
 - **Webhook secret in Terraform state.** GitHub provider has no way to keep it out if done through IaC, not Github App.

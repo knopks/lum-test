@@ -1,3 +1,9 @@
+variable "aws_account_id" {
+  description = "AWS account to deploy into"
+  type        = string
+  default     = "308054409751"
+}
+
 variable "github_owner" {
   description = "GitHub user or organization that owns the repository"
   type        = string

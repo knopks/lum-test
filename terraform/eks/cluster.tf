@@ -15,8 +15,8 @@ module "eks_cluster" {
   }
 
   access_entries = {
-    lum-test = { # temporary user I made for myself
-      principal_arn = "arn:aws:iam::308054409751:user/lum-test"
+    test = { # my current testing user, would remove
+      principal_arn = "arn:aws:iam::${var.aws_account_id}:user/lum-test"
       policy_arn    = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
     }
   }

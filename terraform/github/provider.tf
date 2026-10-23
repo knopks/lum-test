@@ -13,7 +13,7 @@ provider "github" {
 
 provider "aws" {
   region              = "eu-north-1"
-  allowed_account_ids = ["308054409751"]
+  allowed_account_ids = [var.aws_account_id]
 
   default_tags {
     tags = {
