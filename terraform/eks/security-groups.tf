@@ -16,7 +16,7 @@ module "atlantis_alb_security_group" {
       from_port   = 80
       to_port     = 80
       cidr_ipv4   = cidr
-      description = "GitHub Webhooks IPV4"
+      description = "GitHub Webhooks"
     }
   }
 

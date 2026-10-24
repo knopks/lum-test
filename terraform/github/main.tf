@@ -3,7 +3,7 @@
 ################################################################################
 resource "github_repository" "this" {
   name        = "lum-test"
-  description = "Assignment for EKS and Atlantis"
+  description = "Homework Assignment for EKS and Atlantis"
   visibility  = "public"
 
   has_issues   = true

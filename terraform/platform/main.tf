@@ -139,9 +139,6 @@ resource "aws_eks_access_policy_association" "atlantis" {
 resource "kubernetes_namespace_v1" "atlantis" {
   metadata {
     name = "atlantis"
-    labels = {
-      test = "true"
-    }
   }
 }
 
